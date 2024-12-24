@@ -1,0 +1,237 @@
+#matrix = [[112, 42, 83, 119],
+#        [56, 125, 56, 49],
+#        [15, 78, 101, 43],
+#        [62, 98 ,114, 108]]
+
+#matrix = [[1, 2, 3, 4],
+#        [5, 6, 7, 8],
+#        [9, 10, 11, 12],
+#        [13, 14 ,15, 16]]
+
+matrix = [
+    [1, 2, 3, 4, 5, 6],
+    [7, 8, 9, 10, 11, 12],
+    [13, 14, 15, 16, 17, 18],
+    [19, 20, 21, 22, 23, 24],
+    [25, 26, 27, 28, 29, 30],
+    [31, 32, 33, 34, 35, 36]
+]
+
+def flippingMatrix(matrix):
+    n = len(matrix)
+
+    print(matrix)
+
+    # check max value
+    sum_q = 0
+
+    location =[]
+
+    for i in range(n // 2):
+        row_location =[]
+
+        for j in range(n // 2):
+            group = []
+            group.append(matrix[i][j])
+            group.append(matrix[i][-1 - j])
+            group.append(matrix[-1 - i][j])
+            group.append(matrix[-1 - i][-1 - j])
+            #print(matrix[i][j], matrix[i][-1 - j], matrix[-1 - i][j], matrix[-1 - i][-1 - j], end="\n")
+
+            #print(group)
+            sum_q += max(group)
+
+            #ใช้ตำแหน่งนี้ไม่ได้ยกเว้นตัวแรกเพราะตำแหน่งเปลี่ยนหลังหมุน
+            #store max num quadrant location, max number
+            if matrix[i][j] == max(group):
+                k=1
+            elif matrix[i][-1 - j] == max(group):
+                k=2
+            elif matrix[-1 - i][j] == max(group):
+                k=3
+            elif matrix[-1 - i][-1 - j] == max(group):
+                k=4
+            row_location.append([k,max(group)])
+        location.append(row_location)
+    print(location)
+    #print(sum_q)
+
+
+    def reverse_row(matrix,row):
+        new_row =[matrix[row][-i] for i in range(1,n+1)]
+        for i in range(n):
+            #print(i)
+            matrix[row][i] = new_row[i]
+        return matrix
+    #print(reverse_row(matrix,0))
+
+    def reverse_col(matrix,col):
+        new_col =[matrix[-i][col] for i in range(1,n+1)]
+        for i in range(n):
+            #print(i)
+            matrix[i][col] = new_col[i]
+        return matrix
+    #print(reverse_col(matrix, 0))
+
+    def update_location(i,j,location):
+        if i == len(location) - 1 and j == len(location) - 1:
+        # if i and j == last row and column in location then do nothing
+            pass
+
+        elif j == len(location) - 1:  # if j == last index, update next row index 0
+
+            if location[i + 1][0][1] == matrix[i][j + 1]:  # [i+1][0] == next row index 0
+                location[i + 1][0][0] = 1
+            elif location[i + 1][0][1] == matrix[i][-1 - j]:
+                location[i + 1][0][0] = 2
+            elif location[i + 1][0][1] == matrix[-1 - i][j + 1]:
+                location[i + 1][0][0] = 3
+            elif location[i + 1][0][1] == matrix[-1 - i][-1 - j]:
+                location[i + 1][0][0] = 4
+        else:  # update next j+1
+            print('******************')
+            print('max = '+ str(location[i][j + 1][1]))
+            print(matrix[i][j + 1],matrix[i][-1 - (j+1)],matrix[-1 - i][j + 1],matrix[-1 - i][-1 - (j+1)])
+            if location[i][j + 1][1] == matrix[i][j + 1]:
+                print('update to 1')
+                # if j exceed len(location), go to next i and start j = 0 again
+                location[i][j + 1][0] = 1
+            elif location[i][j + 1][1] == matrix[i][-1 - (j+1)]: #need to use -(j+1)
+                print('update to 2')
+                location[i][j + 1][0] = 2
+            elif location[i][j + 1][1] == matrix[-1 - i][j + 1]:
+                print('choose to 3')
+                location[i][j + 1][0] = 3
+
+            elif location[i][j + 1][1] == matrix[-1 - i][-1 - (j+1)]:
+                print('update to 4')
+                location[i][j + 1][0] = 4
+        return location
+
+        #6x6 wrong at 1,1 and 2,1 26 should be 29 and 20 ->23
+        #step24 num 20 doing Q4 then update wrong location
+        # before step 24 doing Q4
+        #step25 num 26 doing Q4 then update wrong location
+        # before step 25 doing Q4
+
+        #เข้าเงื่อนไข else แต่ max ไม่ตรงกับ ค่าใน matrix เลยดักไม่ได้
+
+    # if max in q1 -> no move
+    # if max in q2 -> cur box down, max box down, max box left , max box up
+    # if max in q3 -> cur box right, max box right, max box up, max box left
+    # if max in q4 -> cur box right, max box up, max box left
+    step=0
+    for i in range(n//2):
+        for j in range(n//2):
+            # input 114 return index -> know Q ?
+            if location[i][j][0] == 1: # max in Q1
+                # no move
+                #print(location[i][j])
+                print('Q1')
+                pass
+                #print("step "+str(step))
+                #for row in matrix:
+                #    print(row)
+                #step+=1
+
+            elif location[i][j][0] == 2: # max in Q2
+                #reverse col cur box
+                #reverse col max box
+                #reverse row max box
+                #reverse col max box
+                reverse_col(matrix,j)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_col(matrix,-1-j)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_row(matrix,-1-i)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_col(matrix,j)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                #update location of next max
+                # if next max is in Q1, update
+                update_location(i, j, location)
+
+                #print(location[i][j+1][1],matrix[-1-i][j+1])
+                #print(matrix)
+                #print(location)
+                #print(update_location(i,j,location))
+                print('Q2')
+
+            elif location[i][j][0] == 3: # max in Q3
+                #reverse row cur box
+                #reverse row max box
+                #reverse col max box
+                #reverse row max box
+                reverse_row(matrix,i)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_row(matrix,-1-i)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_col(matrix,-1-j)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_row(matrix,i)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                update_location(i, j, location)
+                print('Q3')
+
+            elif location[i][j][0] == 4:  # max in Q4
+                # reverse col cur box
+                # reverse row max box
+                # reverse col max box
+                reverse_col(matrix, j)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_row(matrix, -1 - i)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                reverse_col(matrix, j)
+                print("step " + str(step)+f" at {(i,j)}")
+                for row in matrix:
+                    print(row)
+                step += 1
+
+                update_location(i, j, location)
+                print('Q4')
+
+                #print(location)
+    return sum_q
+
+
+flippingMatrix(matrix)
